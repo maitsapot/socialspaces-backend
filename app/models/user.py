@@ -1,6 +1,6 @@
-from sqlalchemy import Column, Integer, String, Date, Float,DateTime
-from app.database import Base
+from sqlalchemy import Column, Integer, String, Date, Float, DateTime
 from sqlalchemy.sql import func
+from app.database import Base
 
 class User(Base):
     __tablename__ = "users"
@@ -13,4 +13,3 @@ class User(Base):
     latitude = Column(Float)
     longitude = Column(Float)
     created_at = Column(DateTime, server_default=func.now())
-    
