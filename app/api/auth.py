@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from app.schemas.auth import LoginRequest
 from app.database import SessionLocal
 from app.models.user import User
-from app.models.profiles import Profile
+from app.models.profile import Profile
 
 from firebase_admin import auth as firebase_auth
 

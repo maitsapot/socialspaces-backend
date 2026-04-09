@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.models import user
 from app.api.auth import router as auth_router
 from app.api.user import router as user_router
+from app.api.profile import router as profile_router
 
 app = FastAPI(title="SocialSpace API")
 
@@ -19,6 +20,9 @@ Base.metadata.create_all(bind=engine)
 
 app.include_router(user_router)
 app.include_router(auth_router)
+
+
+app.include_router(profile_router)
 
 @app.get("/")
 def root():
