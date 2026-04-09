@@ -6,12 +6,12 @@ from fastapi.middleware.cors import CORSMiddleware
 # Import models so tables are created
 from app.models import user
 
-from app.routes.auth import router as auth_router
+from app.api.auth import router as auth_router
 
 
 
 # Import routes
-from app.routes.user import router as user_router
+from app.api.user import router as user_router
 
 app = FastAPI(title="SocialSpace API")
 
