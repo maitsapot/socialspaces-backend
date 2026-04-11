@@ -1,31 +1,46 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException, Depends
+from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app.models.user import User
 from app.schemas.user import UserCreate
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
-@router.post("/")
-def register_user(user: UserCreate):
-     
-    print("🔥 register_user HIT") 
+
+def get_db():
     db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
-    new_user = User(
-        name=user.name,
-        date_of_birth=user.date_of_birth,
-        gender=user.gender,
-        phone_number=user.phone_number,
-        latitude=user.latitude,
-        longitude=user.longitude
-    )
 
-    db.add(new_user)
+@router.post("/")
+def register_user(user: UserCreate, db: Session = Depends(get_db)):
+    
+    print("🔥 register_user HIT")
+
+    # 🔥 Find existing user using firebase_uid
+    existing_user = db.query(User).filter_by(
+        firebase_uid=user.firebase_uid
+    ).first()
+
+    if not existing_user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    # 🔥 UPDATE instead of create
+    existing_user.name = user.name
+    existing_user.date_of_birth = user.date_of_birth
+    existing_user.gender = user.gender.lower()
+    existing_user.phone_number = user.phone_number
+    existing_user.latitude = user.latitude
+    existing_user.longitude = user.longitude
+    existing_user.is_profile_complete=True
+
     db.commit()
-    db.refresh(new_user)
-    db.close()
+    db.refresh(existing_user)
 
     return {
-        "message": "User created",
-        "user_id": new_user.id
+        "message": "User updated",
+        "user_id": existing_user.id
     }
