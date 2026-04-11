@@ -1,10 +1,12 @@
 from fastapi import FastAPI
 from app.database import engine, Base
 from fastapi.middleware.cors import CORSMiddleware
-from app.models import user
 from app.api.auth import router as auth_router
 from app.api.user import router as user_router
 from app.api.profile import router as profile_router
+
+from app.models import user
+from app.api import socialspace
 
 app = FastAPI(title="SocialSpace API")
 
@@ -22,8 +24,11 @@ app.include_router(user_router)
 app.include_router(auth_router)
 
 
+app.include_router(socialspace.router)
+
+
 app.include_router(profile_router)
 
 @app.get("/")
 def root():
-    return {"status": "SocialSpace API running 🚀"}
+    return {"status": "SocialSpace V2 API running 🚀"}

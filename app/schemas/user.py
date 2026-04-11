@@ -9,3 +9,4 @@ class UserCreate(BaseModel):
     phone_number: str
     latitude: float
     longitude: float
+    social_space_id: int 
