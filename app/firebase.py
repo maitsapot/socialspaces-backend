@@ -13,7 +13,7 @@ else:
     print("🔥 FIREBASE_KEY IS EMPTY")
 
 if not firebase_json:
-    raise Exception("FIREBASE_KEY not set")
+    raise Exception("FIREBASE_KEY NOT SET")
 
 cred = credentials.Certificate(json.loads(firebase_json))
 
