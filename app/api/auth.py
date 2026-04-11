@@ -8,7 +8,7 @@ from app.database import SessionLocal
 from app.models.user import User
 from app.models.profile import Profile
 
-from firebase_admin import auth as firebase_auth
+from app.firebase import verify_firebase_token
 
 router = APIRouter()
 
@@ -23,8 +23,11 @@ def get_db():
 
 @router.post("/auth/login")
 def login(request: LoginRequest, db: Session = Depends(get_db)):
-    try:
-        decoded_token = firebase_auth.verify_id_token(request.token)
+    try:       
+        decoded_token = verify_firebase_token(request.token)
+        if not decoded_token:
+            raise HTTPException(status_code=401, detail="Invalid Firebase token")
+        
         firebase_uid = decoded_token["uid"]
         phone_number = decoded_token.get("phone_number")
 
