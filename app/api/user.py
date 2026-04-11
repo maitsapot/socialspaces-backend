@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app.models.user import User
 from app.schemas.user import UserCreate
+from geoalchemy2.shape import from_shape
+from shapely.geometry import Point
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -20,7 +22,6 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
     
     print("🔥 register_user HIT")
 
-    # 🔥 Find existing user using firebase_uid
     existing_user = db.query(User).filter_by(
         firebase_uid=user.firebase_uid
     ).first()
@@ -28,14 +29,16 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
     if not existing_user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    # 🔥 UPDATE instead of create
+    # 🔥 Create POINT from incoming data
+    point = Point(user.longitude, user.latitude)
+
+    # 🔥 Update fields
     existing_user.name = user.name
     existing_user.date_of_birth = user.date_of_birth
     existing_user.gender = user.gender.lower()
     existing_user.phone_number = user.phone_number
-    existing_user.latitude = user.latitude
-    existing_user.longitude = user.longitude
-    existing_user.is_profile_complete=True
+    existing_user.location = from_shape(point, srid=4326)
+    existing_user.is_profile_complete = True
 
     db.commit()
     db.refresh(existing_user)

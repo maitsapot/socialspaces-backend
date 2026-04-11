@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, Date, Float, DateTime, Boolean
+from geoalchemy2 import Geometry
 from sqlalchemy.sql import func
 from app.database import Base
 
@@ -15,8 +16,8 @@ class User(Base):
 
     phone_number = Column(String, index=True)
 
-    latitude = Column(Float, nullable=True)
-    longitude = Column(Float, nullable=True)
+        
+    location =Column(Geometry('POINT',srid=4326))
 
     is_profile_complete = Column(Boolean, default=False)
 
